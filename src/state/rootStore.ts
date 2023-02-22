@@ -1,22 +1,26 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { logger } from "redux-logger";
+// import { logger } from "redux-logger";
 import createSagaMiddleware from "redux-saga";
 
-import unitState from "../features/unit/state/reducer";
+import unitState from "../features/example/state/reducer";
 import { rootSaga } from "./rootSaga";
 
 const reducersMap = {
   unitState,
 };
 
-const sagaMiddleware = createSagaMiddleware();
+export const createConfigureStore = () => {
+  const sagaMiddleware = createSagaMiddleware();
+  const store = configureStore({
+    reducer: combineReducers(reducersMap),
+    middleware: [sagaMiddleware],
+  });
 
-const store = configureStore({
-  reducer: combineReducers(reducersMap),
-  middleware: [sagaMiddleware, logger],
-});
+  sagaMiddleware.run(rootSaga);
+  return store;
+};
 
-sagaMiddleware.run(rootSaga);
+const store = createConfigureStore();
 
 export default store;
 
