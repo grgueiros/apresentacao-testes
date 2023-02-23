@@ -12,6 +12,7 @@ export function Container() {
   const canEdit = useSelector(getCanEdit);
   const loading = useSelector(isLoading);
   const failed = useSelector(isFailed);
+  
 
   useEffect(() => {
     dispatch(fetchCanEdit());
@@ -40,7 +41,7 @@ export function Container() {
       ) : (
         <>
           <S.Button onClick={onClickHandler}>Clique para trocar</S.Button>
-          <Dialog />{" "}
+          <Dialog />
         </>
       )}
     </S.ContainerWrapper>

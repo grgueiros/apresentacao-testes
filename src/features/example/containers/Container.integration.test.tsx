@@ -15,9 +15,9 @@ import { token } from "../services/api";
 
 const API = process.env.REACT_APP_API || "";
 const checkCanChangeUrl =
-  "/v2/subscriptions/subscription/user-can-change-day-billing/";
+  "/some-endpoint/";
 
-const changeMovieUrl = "/v2/subscriptions/subscription/change-day-billing/";
+const changeMovieUrl = "/some-other-endpoint/";
 
 const generateErrorResponse = (code: string) => ({
   message: {
@@ -58,8 +58,8 @@ test("show unauthorized message if any unknown error", async () => {
   expect(text).toBeInTheDocument();
 });
 
-test("show recently changed message if error code is 400908", async () => {
-  initTest({ errorCode: "400908" });
+test("show recently changed message if error code is 45", async () => {
+  initTest({ errorCode: "45" });
 
   const changeButton = await screen.findByRole("button", {
     name: /clique para trocar/i,
@@ -76,6 +76,47 @@ test("show recently changed message if error code is 400908", async () => {
   await userEvent.click(gotItButton);
 
   await waitForElementToBeRemoved(gotItButton);
+});
+
+test("change movie fail flow", async () => {
+  initTest();
+
+  nock(API)
+    .post(changeMovieUrl, {
+      day_billing: 8,
+    })
+    .query({ token })
+    .reply(500, new Error());
+
+  const changeButton = await screen.findByRole("button", {
+    name: /clique para trocar/i,
+  });
+
+  await userEvent.click(changeButton);
+
+  const modalTitle = await screen.findByRole("heading", {
+    name: /faça alguma coisa incrível/i,
+  });
+
+  expect(modalTitle).toBeInTheDocument();
+
+  const select = screen.getByRole("button", { name: /filme/i });
+
+  await userEvent.click(select);
+
+  const option = screen.getByRole("option", {
+    name: /top gun: maverick/i,
+  });
+
+  await userEvent.click(option);
+
+  const submitButton = screen.getByRole("button", { name: /confirmar/i });
+
+  await userEvent.click(submitButton);
+
+  const alertMessage = await screen.findByText(/alguma coisa deu errado/i);
+
+  expect(alertMessage).toBeInTheDocument();
 });
 
 test("change movie success flow", async () => {
@@ -129,43 +170,4 @@ test("change movie success flow", async () => {
   await waitForElementToBeRemoved(successHeading);
 });
 
-test("change movie fail flow", async () => {
-  initTest();
 
-  nock(API)
-    .post(changeMovieUrl, {
-      day_billing: 8,
-    })
-    .query({ token })
-    .reply(500, new Error());
-
-  const changeButton = await screen.findByRole("button", {
-    name: /clique para trocar/i,
-  });
-
-  await userEvent.click(changeButton);
-
-  const modalTitle = await screen.findByRole("heading", {
-    name: /faça alguma coisa incrível/i,
-  });
-
-  expect(modalTitle).toBeInTheDocument();
-
-  const select = screen.getByRole("button", { name: /filme/i });
-
-  await userEvent.click(select);
-
-  const option = screen.getByRole("option", {
-    name: /top gun: maverick/i,
-  });
-
-  await userEvent.click(option);
-
-  const submitButton = screen.getByRole("button", { name: /confirmar/i });
-
-  await userEvent.click(submitButton);
-
-  const alertMessage = await screen.findByText(/alguma coisa deu errado/i);
-
-  expect(alertMessage).toBeInTheDocument();
-});

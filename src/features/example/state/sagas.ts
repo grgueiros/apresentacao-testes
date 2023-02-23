@@ -9,7 +9,7 @@ import { ChangeError, getAxiosErrorCode } from "../utils";
 const actionByErrorCode: Record<string, ActionCreatorWithoutPayload<string>> = {
   "400903": actions.verifyCanChangeWithNotMonthly,
   "400905": actions.verifyCanChangeWithUnpaidMonth,
-  "400908": actions.verifyCanChangeAlreadyChanged,
+  "45": actions.verifyCanChangeAlreadyChanged,
 };
 const callActionByErrorCode = (code: string) => actionByErrorCode[code]();
 

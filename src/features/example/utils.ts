@@ -14,12 +14,14 @@ export const getAxiosErrorCode = (error: AxiosError<ChangeError>) => {
   return error.response?.data?.message?.code || "UnknownError";
 };
 
+export const parseDate = (date: string) => {
+  if (typeof date !== "string") return "";
+  const [, month, day] = date.split("-");
 
+  const parseEntry = (entry: string) => entry.padStart(2, "0");
 
-
-
-
-
+  return `${parseEntry(day)}/${parseEntry(month)}`;
+};
 
 export function highCognitiveComplexity() {
   let something;

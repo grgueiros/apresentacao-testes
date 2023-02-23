@@ -7,10 +7,10 @@ export type ResponseCanEdit = {
 
 export const userCanChange = (): Promise<AxiosResponse<ResponseCanEdit>> =>
   api.get<ResponseCanEdit>(
-    "/v2/subscriptions/subscription/user-can-change-day-billing/"
+    "/some-endpoint/"
   );
 
 export const changeMovie = (): Promise<AxiosResponse<ResponseCanEdit>> =>
-  api.post<ResponseCanEdit>("/v2/subscriptions/subscription/change-day-billing/", {
+  api.post<ResponseCanEdit>("/some-other-endpoint/", {
     day_billing: 8,
   });
